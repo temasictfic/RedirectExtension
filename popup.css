@@ -1,0 +1,442 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-root: #0c0c10;
+  --bg-surface: #14141b;
+  --bg-card: #1a1a24;
+  --bg-input: #10101a;
+  --border: #252535;
+  --border-focus: #34d399;
+  --text-primary: #e8e8ed;
+  --text-secondary: #7a7a8e;
+  --text-muted: #4a4a5e;
+  --accent: #34d399;
+  --accent-secondary: #06b6d4;
+  --danger: #f87171;
+  --danger-hover: #fca5a5;
+  --toggle-off: #2a2a3a;
+  --toggle-on: linear-gradient(135deg, #34d399, #06b6d4);
+}
+
+html, body {
+  width: 380px;
+  height: 520px;
+  background: var(--bg-root);
+  color: var(--text-primary);
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  font-size: 13px;
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ── Header ──────────────────────────────── */
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.12), rgba(6, 182, 212, 0.08));
+  border: 1px solid rgba(52, 211, 153, 0.15);
+}
+
+h1 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #e8e8ed, #a0a0b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+/* ── Add Button (header) ─────────────────── */
+
+.add-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.12), rgba(6, 182, 212, 0.08));
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 9px;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.22), rgba(6, 182, 212, 0.16));
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.1);
+}
+
+.add-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── Toggle Switch ───────────────────────── */
+
+.toggle {
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle input {
+  display: none;
+}
+
+.toggle-track {
+  display: block;
+  width: 42px;
+  height: 24px;
+  background: var(--toggle-off);
+  border-radius: 12px;
+  position: relative;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.toggle input:checked + .toggle-track {
+  background: var(--toggle-on);
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.toggle input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(18px);
+  box-shadow: 0 1px 6px rgba(52, 211, 153, 0.3);
+}
+
+/* Small toggle for per-rule */
+.toggle-sm .toggle-track {
+  width: 34px;
+  height: 20px;
+  border-radius: 10px;
+}
+
+.toggle-sm .toggle-thumb {
+  width: 14px;
+  height: 14px;
+  top: 3px;
+  left: 3px;
+}
+
+.toggle-sm input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(14px);
+}
+
+/* ── Rules Container ─────────────────────── */
+
+main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+main::-webkit-scrollbar {
+  width: 5px;
+}
+
+main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+main::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+main::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ── Rule Card ───────────────────────────── */
+
+.rule-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  animation: cardIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.2s ease, opacity 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.rule-card:hover {
+  border-color: #303045;
+}
+
+.rule-card.disabled {
+  opacity: 0.45;
+}
+
+.rule-card.removing {
+  animation: cardOut 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cardOut {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+.rule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.rule-number {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.rule-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delete-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.2);
+  color: var(--danger);
+}
+
+.delete-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── Delete Confirm Bar ──────────────────── */
+
+.confirm-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: rgba(248, 113, 113, 0.06);
+  border: 1px solid rgba(248, 113, 113, 0.15);
+  border-radius: 8px;
+  animation: confirmIn 0.2s ease;
+}
+
+.confirm-bar.visible {
+  display: flex;
+}
+
+@keyframes confirmIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.confirm-bar span {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--danger);
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.confirm-actions button {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.btn-cancel {
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border) !important;
+}
+
+.btn-cancel:hover {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.btn-confirm-delete {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-confirm-delete:hover {
+  background: var(--danger-hover);
+  color: #1a1a24;
+}
+
+/* ── Input Fields ────────────────────────── */
+
+.field {
+  margin-bottom: 8px;
+}
+
+.field:last-of-type {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.field-input {
+  width: 100%;
+  height: 34px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 10px;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 400;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-input::placeholder {
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11.5px;
+}
+
+.field-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.1);
+}
+
+/* ── Empty State ─────────────────────────── */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 20px;
+  gap: 8px;
+}
+
+.empty-state p {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.empty-state span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ── Disabled global state ───────────────── */
+
+body.globally-disabled main {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+body.globally-disabled .add-btn {
+  opacity: 0.35;
+  pointer-events: none;
+}
