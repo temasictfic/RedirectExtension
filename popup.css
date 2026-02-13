@@ -289,6 +289,31 @@ main::-webkit-scrollbar-thumb:hover {
   transform: scale(0.92);
 }
 
+/* ── Add Match URL Button (inside card) ──── */
+
+.add-match-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  border-radius: 6px;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-match-btn:hover {
+  background: rgba(52, 211, 153, 0.18);
+  border-color: rgba(52, 211, 153, 0.45);
+}
+
+.add-match-btn:active {
+  transform: scale(0.92);
+}
+
 /* ── Delete Confirm Bar ──────────────────── */
 
 .confirm-bar {
@@ -405,6 +430,202 @@ main::-webkit-scrollbar-thumb:hover {
 .field-input:focus {
   border-color: var(--border-focus);
   box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.1);
+}
+
+/* ── Match URLs Section ──────────────────── */
+
+.match-urls-section {
+  margin-top: 8px;
+}
+
+.match-urls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  user-select: none;
+}
+
+.match-urls-header:hover {
+  border-color: #303045;
+  background: rgba(16, 16, 26, 0.8);
+}
+
+.match-urls-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.match-urls-preview {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.match-count-badge {
+  flex-shrink: 0;
+  min-width: 20px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(6, 182, 212, 0.1));
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  border-radius: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.chevron-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.match-urls-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.match-urls-section.collapsed .chevron-icon {
+  transform: rotate(-90deg);
+}
+
+/* ── Match URLs List (expanded content) ──── */
+
+.match-urls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+}
+
+.match-urls-section.collapsed .match-urls-list {
+  display: none;
+}
+
+/* ── Individual Match URL Row ────────────── */
+
+.match-url-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: cardIn 0.2s ease;
+  position: relative;
+}
+
+.match-url-row.removing {
+  animation: cardOut 0.2s ease forwards;
+}
+
+.match-url-row .match-input {
+  flex: 1;
+  height: 30px;
+  font-size: 11px;
+}
+
+/* ── Drag Handle ─────────────────────────── */
+
+.drag-handle {
+  flex-shrink: 0;
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: grab;
+  transition: color 0.2s ease;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-handle:hover {
+  color: var(--text-secondary);
+}
+
+.match-url-row.dragging {
+  opacity: 0.4;
+}
+
+.match-url-row.drag-over {
+  border-top: 2px solid var(--accent);
+}
+
+.match-delete-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.match-delete-btn:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.2);
+  color: var(--danger);
+}
+
+.match-delete-btn:active {
+  transform: scale(0.9);
+}
+
+/* ── Per-Match Confirm Bar ───────────────── */
+
+.match-confirm-bar {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  background: rgba(26, 26, 36, 0.95);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 8px;
+  z-index: 1;
+  animation: confirmIn 0.2s ease;
+}
+
+.match-confirm-bar.visible {
+  display: flex;
+}
+
+.match-confirm-bar span {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--danger);
+}
+
+.match-confirm-bar .confirm-actions button {
+  padding: 2px 8px;
+  font-size: 10.5px;
 }
 
 /* ── Empty State ─────────────────────────── */

@@ -1,4 +1,4 @@
-const DEFAULT_RULES = [
+const DEFAULT_MATCH_PATTERNS = [
   "*.medium.*",
   "https://blog.stackademic.com/",
   "https://towardsdatascience.com/",
@@ -32,13 +32,48 @@ const DEFAULT_RULES = [
 
 const DEFAULT_SETTINGS = {
   globalEnabled: true,
-  rules: DEFAULT_RULES.map(matchUrl => ({
+  rules: [{
     id: crypto.randomUUID(),
-    matchUrl,
     prefixUrl: "https://freedium-mirror.cfd/",
+    matchUrls: DEFAULT_MATCH_PATTERNS.map(pattern => ({
+      id: crypto.randomUUID(),
+      pattern
+    })),
     enabled: true
-  }))
+  }]
 };
+
+// ── Migration ─────────────────────────────
+
+function migrateSettings(data) {
+  if (!data.rules || data.rules.length === 0) return data;
+  if (Array.isArray(data.rules[0].matchUrls)) return data;
+
+  const groupMap = new Map();
+  for (const oldRule of data.rules) {
+    const key = oldRule.prefixUrl || "";
+    if (!groupMap.has(key)) {
+      groupMap.set(key, { matchUrls: [], hasEnabled: false });
+    }
+    const group = groupMap.get(key);
+    group.matchUrls.push({ id: crypto.randomUUID(), pattern: oldRule.matchUrl || "" });
+    if (oldRule.enabled) group.hasEnabled = true;
+  }
+
+  const newRules = [];
+  for (const [prefixUrl, group] of groupMap) {
+    newRules.push({
+      id: crypto.randomUUID(),
+      prefixUrl,
+      matchUrls: group.matchUrls,
+      enabled: group.hasEnabled
+    });
+  }
+
+  return { globalEnabled: data.globalEnabled ?? true, rules: newRules };
+}
+
+// ── Regex ─────────────────────────────────
 
 let settings = { globalEnabled: true, rules: [] };
 let regexCache = new Map();
@@ -52,18 +87,26 @@ function wildcardToRegex(pattern) {
 function rebuildRegexCache() {
   regexCache.clear();
   for (const rule of settings.rules) {
-    try {
-      regexCache.set(rule.id, wildcardToRegex(rule.matchUrl));
-    } catch (e) {
-      // Invalid pattern — skip
+    for (const match of rule.matchUrls) {
+      try {
+        regexCache.set(match.id, wildcardToRegex(match.pattern));
+      } catch (e) {
+        // Invalid pattern — skip
+      }
     }
   }
 }
 
+// ── Settings ──────────────────────────────
+
 async function loadSettings() {
   const data = await chrome.storage.sync.get("freecfd");
   if (data.freecfd) {
-    settings = data.freecfd;
+    settings = migrateSettings(data.freecfd);
+    // Persist if migration happened
+    if (data.freecfd !== settings) {
+      await chrome.storage.sync.set({ freecfd: settings });
+    }
   } else {
     settings = structuredClone(DEFAULT_SETTINGS);
     await chrome.storage.sync.set({ freecfd: settings });
@@ -75,10 +118,12 @@ loadSettings();
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "sync" && changes.freecfd) {
-    settings = changes.freecfd.newValue;
+    settings = migrateSettings(changes.freecfd.newValue);
     rebuildRegexCache();
   }
 });
+
+// ── Redirect ──────────────────────────────
 
 const recentRedirects = new Map();
 
@@ -99,12 +144,14 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
     // Loop prevention: skip if URL already starts with the prefix
     if (url.startsWith(rule.prefixUrl)) continue;
 
-    const regex = regexCache.get(rule.id);
-    if (regex && regex.test(url)) {
-      const redirectUrl = rule.prefixUrl + url;
-      recentRedirects.set(tabId, Date.now());
-      chrome.tabs.update(tabId, { url: redirectUrl });
-      return;
+    for (const match of rule.matchUrls) {
+      const regex = regexCache.get(match.id);
+      if (regex && regex.test(url)) {
+        const redirectUrl = rule.prefixUrl + url;
+        recentRedirects.set(tabId, Date.now());
+        chrome.tabs.update(tabId, { url: redirectUrl });
+        return;
+      }
     }
   }
 });

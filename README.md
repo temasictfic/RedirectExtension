@@ -8,8 +8,8 @@ It ships with sensible defaults for Medium-family sites and uses `https://freedi
 
 ## Features
 
-- **Rule-based redirects**: each rule has a `Match URL` pattern and a `Prefix URL`
-- **Wildcards**: use `*` in `Match URL` (example: `*.medium.*`)
+- **Rule-based redirects**: each rule has a `Prefix URL` and multiple `Match URLs`
+- **Wildcards**: use `*` in `Match URLs` (example: `*.medium.*`)
 - **Per-rule enable/disable** toggles
 - **Global enable/disable** toggle
 - **Sync across browsers** (uses `chrome.storage.sync`)
@@ -26,8 +26,8 @@ It ships with sensible defaults for Medium-family sites and uses `https://freedi
 1. Click the extension icon to open the popup
 2. Add a rule (`+`)
 3. Set:
-   - **Match URL**: what to match (supports `*` wildcard)
    - **Prefix URL**: what to prepend to the current URL
+   - **Match URLs**: add one or more patterns to match (supports `*` wildcard)
 4. Toggle rules on/off as needed
 
 When you navigate to a matching page, the extension redirects the tab to:
@@ -43,7 +43,7 @@ Example:
 ## How matching works
 
 - The extension listens to top-frame navigations (`chrome.webNavigation.onBeforeNavigate`).
-- `Match URL` is converted to a regular expression where `*` becomes `.*`.
+- `Match URLs` are converted to regular expressions where `*` becomes `.*`.
 - Redirect loops are prevented by skipping redirects when the current URL already starts with the rule’s prefix.
 
 ## Permissions
@@ -63,4 +63,4 @@ Example:
 ## Notes
 
 - Settings are stored under the `freecfd` key in `chrome.storage.sync`.
-- If you want different defaults, edit `DEFAULT_RULES` / `DEFAULT_SETTINGS` in `background.js` and `popup.js`.
+- If you want different defaults, edit `DEFAULT_MATCH_PATTERNS` / `DEFAULT_SETTINGS` in `background.js` and `popup.js`.
